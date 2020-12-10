@@ -1,7 +1,6 @@
 package server;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,13 +70,11 @@ public class Example {
           try {
             folder.mkdir(); // 폴더 생성합니다.
             //System.out.println("폴더가 생성되었습니다.");
-            //path = path + PATH_SEPARATE + folder.getName();
           } catch (Exception e) {
             e.getStackTrace();
           }
         } else {
           //System.out.println("이미 폴더가 생성되어 있습니다.");
-         // path = path + PATH_SEPARATE + folder.getName();
         }
         path = path + PATH_SEPARATE + folder.getName();
       }else if(aa.contains(".")) {
@@ -85,8 +82,9 @@ public class Example {
         
         try {
           InputStream yes = jarFile.getInputStream(name);
-         // FileInputStream fis = new FileInputStream(path2);
           FileOutputStream fos = new FileOutputStream(path + PATH_SEPARATE + aa);
+          
+          System.out.println("ㅋㅋㅋㅋ" + path + PATH_SEPARATE + aa);
           
           int readByteNo;
           byte[] readBytes = new byte[100];
@@ -99,47 +97,13 @@ public class Example {
           yes.close();
           
         } catch (Exception e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         }
         
       }
-     // System.out.println("## " + aa);
     }
   }
-  
-//  File file = new File(path + PATH_SEPARATE + aa);
-//  boolean success;
-//  try {
-//    success = file.createNewFile();
-//    if(!success) {
-//      System.out.println("이미 존재");
-//    }
-//  } catch (IOException e) {
-//    // TODO Auto-generated catch block
-//    e.printStackTrace();
-//  }
 
-//  private static void makeFiles(String contextPath) {
-//
-//    File file = new File(contextPath);
-//  }
-
-//  private static String[] getFileName() throws IOException {
-//
-//    ArrayList<String> fileNames = new ArrayList<String>();
-//
-//    Files.walk(Paths.get(PATH)).forEach(filePath -> {
-//      if (Files.isRegularFile(filePath)) {
-//        System.out.println("ㅠㅠ: " + filePath.getFileName());
-//        // fileNames.add(filePath.getFileName());
-//
-//      }
-//    });
-//
-//
-//    return null;
-//  }
 
   private static String getSplit(String text, String split, boolean b) {
 
