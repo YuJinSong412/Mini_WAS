@@ -11,25 +11,29 @@ import util.Paths;
 
 public class WarExtract {
 
-  private static String warFileName = "Beer.war";  //그냥 일단 지정해줌
+  private String warFileName = "Beer.war"; // 그냥 일단 지정해줌
 
   public void start() {
 
+    JarFile jarFile = null;
     try {
-      JarFile jarFile = new JarFile(Paths.getDefaultRunPath() + Paths.getPathSeparate() + warFileName);
+      jarFile = new JarFile(Paths.getDefaultRunPath() + Paths.getPathSeparate() + warFileName);
       String contextName = getContextName(warFileName, "\\.");
       Paths.setContextName(contextName);
-      
-      // 일단 폴더 이름이 있는지 확인하고 없으면 폴더를 먼저 만들어준다.
+
+
+      // 일단 폴더 이름이 있는지 확인하고(여기서는 Beer폴더) 없으면 폴더를 먼저 만들어준다.
       String contextPath = Paths.getDefaultRunPath() + Paths.getPathSeparate() + contextName;
       makeFolder(contextPath);
 
-      // 그리고 그 다음에 폴더 밑으로 파일을 하나씩 풀어나간다.
+
+      // 그리고 그 다음에 폴더(Beer폴더) 밑으로 파일을 하나씩 풀어나간다.
       Enumeration<JarEntry> entries = jarFile.entries();
 
       while (entries.hasMoreElements()) {
         JarEntry entry = entries.nextElement();
 
+        // '/'이걸로 끝나면 폴더라고 하고 폴더를 생성한다.
         if (entry.getName().endsWith("/")) {
           File file = new File(contextPath + Paths.getPathSeparate() + entry);
           file.mkdirs();
@@ -43,7 +47,8 @@ public class WarExtract {
 
           try {
             InputStream is = jarFile.getInputStream(entry2);
-            FileOutputStream fos = new FileOutputStream(contextPath + Paths.getPathSeparate() + entry2);
+            FileOutputStream fos =
+                new FileOutputStream(contextPath + Paths.getPathSeparate() + entry2);
 
             int readByteNo;
             byte[] readBytes = new byte[100];
@@ -65,7 +70,7 @@ public class WarExtract {
     }
   }
 
-  public String getContextName(String warFileName, String split) {
+  private String getContextName(String warFileName, String split) {
 
     String[] text = warFileName.split(split);
 

@@ -10,6 +10,12 @@ import util.Paths;
 
 public class XmlParsing {
 
+  private final String SERVLET_NAME = "<servlet-name>";
+
+  private final String SERVLET_CLASS = "<servlet-class>";
+
+  private final String URL_PATTERN = "<url-pattern>";
+
   public Map<String, String> parseXml() {
 
     Map<String, String> servletMap = new HashMap<String, String>();
@@ -26,28 +32,16 @@ public class XmlParsing {
       String servletClass = "";
       String servletName = "";
 
-      for (int i = 1; (line = br.readLine()) != null; i++) {
-        if (oldLine.contains("<servlet-name>") && line.contains("<servlet-class>")) {
-          int name_firstText = oldLine.indexOf(">") + 1;
-          int name_lastText = oldLine.indexOf("</") - 1;
+      while ((line = br.readLine()) != null) {
+        if (oldLine.contains(SERVLET_NAME) && line.contains(SERVLET_CLASS)) {
+          servletName = getServletName(oldLine);
+          servletClass = getServletClass(line);
 
-          int firstText = line.indexOf(">") + 1;
-          int lastText = line.indexOf("</") - 1;
-
-          servletName = oldLine.substring(name_firstText, name_lastText + 1);
-          servletClass = line.substring(firstText, lastText + 1);
-
-        } else if (oldLine.contains("<servlet-name>") && line.contains("<url-pattern>")) {
-          int name_firstText = oldLine.indexOf(">") + 1;
-          int name_lastText = oldLine.indexOf("</") - 1;
-
-          String servletName2 = oldLine.substring(name_firstText, name_lastText + 1);
+        } else if (oldLine.contains(SERVLET_NAME) && line.contains(URL_PATTERN)) {
+          String servletName2 = getServletName(oldLine);
 
           if (servletName2.equals(servletName)) {
-            int firstText = line.indexOf(">") + 1;
-            int lastText = line.indexOf("</") - 1;
-            String servletUrl = line.substring(firstText, lastText + 1);
-
+            String servletUrl = getUrlPattern(line);
             servletMap.put(servletUrl, servletClass);
           }
         }
@@ -57,12 +51,40 @@ public class XmlParsing {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    for(String key : servletMap.keySet()) {
-      System.out.println("aa" + key + "  bb: " + servletMap.get(key));
-    }
-    
-     return servletMap;
+    return servletMap;
 
+  }
+
+  private String getServletName(String oldLine) {
+
+    int name_firstText = oldLine.indexOf(">") + 1;
+    int name_lastText = oldLine.indexOf("</") - 1;
+
+    String servletName = oldLine.substring(name_firstText, name_lastText + 1);
+
+    return servletName;
+
+  }
+
+  private String getServletClass(String line) {
+
+    int class_firstText = line.indexOf(">") + 1;
+    int class_lastText = line.indexOf("</") - 1;
+
+    String servletClass = line.substring(class_firstText, class_lastText + 1);
+
+    return servletClass;
+  }
+
+  private String getUrlPattern(String line) {
+
+    int class_firstText = line.indexOf(">") + 1;
+    int class_lastText = line.indexOf("</") - 1;
+
+    String servletUrl = line.substring(class_firstText, class_lastText + 1);
+
+
+    return servletUrl;
   }
 
 }

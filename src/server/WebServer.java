@@ -28,7 +28,13 @@ public class WebServer {
   public static ExecutorService executorService; // 스레드풀인 ExecutorService 선언
 
   private ServerSocket serverSocket;
+  
+  private static final String ERROR_PAGE = "errorPage.html";
 
+  private static final String PAGE_FOLDER = "/basic";
+  
+  private static final String HTML_EXTENSION = ".html";
+  
   public void start(Map<String, Servlet> executeServlet) {
 
     ExecutorService threadPool = new ThreadPoolExecutor(10, // 코어 스레드 개수
@@ -65,37 +71,37 @@ public class WebServer {
               bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
               request = receiveRequest(request, bufferedReader);
               System.out.println("오청받기 성공");
-              System.out.println("request Url!!!" + request.getRequestUrl());
 
               outputStream = socket.getOutputStream();
               Response response = new Response(outputStream);
 
               // xml에 매핑되어있는 것이 있는지 확인하기
+              String newRequestUrl = "";
+              if (request.getRequestUrl().contains("?")) {
+                String[] newRequestURL = request.getRequestUrl().split("\\?");
+                newRequestUrl = newRequestURL[0];
+              }
+              
               for (String key : executeServlet.keySet()) {
-                System.out.println("key: " + key);
-                if (("/basic" +request.getRequestUrl()).equals(key + "?kind=Terra")) {
-                  
+                if ((PAGE_FOLDER + newRequestUrl).equals(key)) {
+
                   new WebContainer(request, response).start(executeServlet);
-                  
-                } else { //매핑 없으면 정적폴더로 가서 알맞게 띄우기
+
+                } else { // 매핑 없으면 정적폴더로 가서 알맞게 띄우기
                   String changeRequestUrl = request.getRequestUrl().replace("/", "\\");
 
-                  File file = new File(Paths.getStaticFilePath() + changeRequestUrl + ".html");
+                  File file = new File(Paths.getStaticFilePath() + changeRequestUrl + HTML_EXTENSION);
 
                   if (file.isFile()) {
                     sendResponse(file, response);
                   } else {
                     System.out.println("파일을 찾을 수 없습니다.");
                     file = new File(
-                        Paths.getStaticFilePath() + Paths.getPathSeparate() + "errorPage.html");
+                        Paths.getStaticFilePath() + Paths.getPathSeparate() + ERROR_PAGE);
                     sendResponse(file, response);
                   }
                 }
-
               }
-
-
-
             } catch (Exception e) {
               e.printStackTrace();
             } finally {
@@ -108,9 +114,7 @@ public class WebServer {
                 e.printStackTrace();
               }
             }
-
           }
-
         };
         executorService.submit(runnable);
       }
@@ -128,8 +132,6 @@ public class WebServer {
       Map<String, String> requestHeaderMap = new HashMap<String, String>();
 
       for (int i = 1; (line = bufferedReader.readLine()) != null && !line.equals(""); i++) {
-        // System.out.println(line);
-
         if (i == 1) {
           int firstBlank = line.indexOf(" ");
           int lastBlank = line.lastIndexOf(" ");
