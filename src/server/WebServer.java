@@ -9,7 +9,9 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
@@ -56,7 +58,7 @@ public class WebServer {
 
         // 스레드 풀의 작업 생성
         Runnable runnable = new Runnable() {
-
+          
           @Override
           public void run() {
 
@@ -75,7 +77,7 @@ public class WebServer {
               outputStream = socket.getOutputStream();
               Response response = new Response(outputStream);
 
-              // xml에 매핑되어있는 것이 있는지 확인하기
+              // xml에 매핑되어있는 것이 있는지 확인하기 
               String newRequestUrl = "";
               if (request.getRequestUrl().contains("?")) {
                 String[] newRequestURL = request.getRequestUrl().split("\\?");
@@ -88,6 +90,7 @@ public class WebServer {
                   new WebContainer(request, response).start(executeServlet);
 
                 } else { // 매핑 없으면 정적폴더로 가서 알맞게 띄우기
+                  
                   String changeRequestUrl = request.getRequestUrl().replace("/", "\\");
 
                   File file = new File(Paths.getStaticFilePath() + changeRequestUrl + HTML_EXTENSION);
@@ -124,6 +127,11 @@ public class WebServer {
 
   }
 
+  private void sendRedirect() {
+    
+  }
+  
+  
   private Request receiveRequest(Request request, BufferedReader bufferedReader) {
 
     try {
@@ -138,6 +146,7 @@ public class WebServer {
 
           request.setMethod(line.substring(0, firstBlank));
           request.setRequestUrl(line.substring(firstBlank + 1, lastBlank).trim());
+          System.out.println("?????????: " +request.getRequestUrl());
           request.setHttpVersion(line.substring(lastBlank + 1).trim());
 
         } else {
