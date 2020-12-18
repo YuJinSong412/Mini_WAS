@@ -11,7 +11,11 @@ import env.Paths;
 
 public class WarExtract {
 
-  private String warFileName = "Beer.war"; // 그냥 일단 지정해줌
+  private String warFileName; // 그냥 일단 지정해줌
+  
+  public WarExtract() {
+    warFileName = "Beer.war";
+  }
 
   public void start() {
 
