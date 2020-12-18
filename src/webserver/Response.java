@@ -1,4 +1,4 @@
-package communication;
+package webserver;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,7 +45,7 @@ public class Response {
     return firstLine;
   }
 
-  public void setFirstLine(String firstLine) {
+  public void setStatusCode(String firstLine) {
 
     this.firstLine = firstLine;
   }

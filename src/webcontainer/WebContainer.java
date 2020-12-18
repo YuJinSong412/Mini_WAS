@@ -1,8 +1,8 @@
-package container;
+package webcontainer;
 
 import java.util.Map;
-import communication.Request;
-import communication.Response;
+import webserver.Request;
+import webserver.Response;
 
 public class WebContainer {
   

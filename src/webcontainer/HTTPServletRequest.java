@@ -1,8 +1,8 @@
-package container;
+package webcontainer;
 
 import java.util.HashMap;
 import java.util.Map;
-import communication.Request;
+import webserver.Request;
 
 public class HTTPServletRequest {
 

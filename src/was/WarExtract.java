@@ -1,4 +1,4 @@
-package server;
+package was;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import util.Paths;
+import env.Paths;
 
 public class WarExtract {
 

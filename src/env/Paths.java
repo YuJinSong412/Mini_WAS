@@ -1,4 +1,4 @@
-package util;
+package env;
 
 
 public class Paths {
@@ -14,6 +14,8 @@ public class Paths {
   private static String SERVLET_PATH = null;
   
   private static String STATIC_FILE_PATH = null;
+  
+ // private static String WELCOME_FILE = ;
   
   
   public static String getContextName() {

@@ -1,4 +1,4 @@
-package server;
+package was;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -6,8 +6,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
-import container.Servlet;
-import util.Paths;
+import env.Paths;
+import webcontainer.Servlet;
 
 public class WarLoader {
 
@@ -31,7 +31,9 @@ public class WarLoader {
       URLClassLoader urlClassLoader = new URLClassLoader(new URL[] {classRepo.toURI().toURL()});
 
       for (String key : servletMap.keySet()) {
+        System.out.println("zz : " + servletMap.get(key));
         Class<?> externalFromUrl = urlClassLoader.loadClass(servletMap.get(key));
+        
         Servlet myServlet = (Servlet) externalFromUrl.newInstance();
         myServlet.init();
 

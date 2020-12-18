@@ -1,4 +1,4 @@
-package server;
+package webserver;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,11 +17,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import communication.Request;
-import communication.Response;
-import container.Servlet;
-import container.WebContainer;
-import util.Paths;
+import enums.StatusCode;
+import env.Paths;
+import webcontainer.Servlet;
+import webcontainer.WebContainer;
 
 public class WebServer {
 
@@ -30,14 +29,14 @@ public class WebServer {
   public static ExecutorService executorService; // 스레드풀인 ExecutorService 선언
 
   private ServerSocket serverSocket;
-  
+
   private static final String ERROR_PAGE = "errorPage.html";
 
   private static final String PAGE_FOLDER = "/basic";
-  
+
   private static final String HTML_EXTENSION = ".html";
-  
-  public void start(Map<String, Servlet> executeServlet) {
+
+  public void start(Map<String, Servlet> servletMap2) {
 
     ExecutorService threadPool = new ThreadPoolExecutor(10, // 코어 스레드 개수
         100, // 최대 스레드 개수
@@ -58,7 +57,7 @@ public class WebServer {
 
         // 스레드 풀의 작업 생성
         Runnable runnable = new Runnable() {
-          
+
           @Override
           public void run() {
 
@@ -77,33 +76,50 @@ public class WebServer {
               outputStream = socket.getOutputStream();
               Response response = new Response(outputStream);
 
-              // xml에 매핑되어있는 것이 있는지 확인하기 
+              // xml에 매핑되어있는 것이 있는지 확인하기
               String newRequestUrl = "";
               if (request.getRequestUrl().contains("?")) {
                 String[] newRequestURL = request.getRequestUrl().split("\\?");
                 newRequestUrl = newRequestURL[0];
               }
-              
-              for (String key : executeServlet.keySet()) {
+              //
+              // if(executeServlet.keySet().contains(PAGE_FOLDER + newRequestUrl)) {
+              //
+              // }else {
+              // // statlc
+              // }
+
+              for (String key : servletMap2.keySet()) {
                 if ((PAGE_FOLDER + newRequestUrl).equals(key)) {
 
-                  new WebContainer(request, response).start(executeServlet);
+                  new WebContainer(request, response).start(servletMap2);
 
                 } else { // 매핑 없으면 정적폴더로 가서 알맞게 띄우기
-                  
-                  String changeRequestUrl = request.getRequestUrl().replace("/", "\\");
 
-                  File file = new File(Paths.getStaticFilePath() + changeRequestUrl + HTML_EXTENSION);
+                  File file = null;
+
+                  if (request.getRequestUrl().equals("/" + Paths.getContextName())) {
+
+                    file = new File(Paths.getStaticFilePath() + Paths.getPathSeparate() + "index"
+                        + HTML_EXTENSION);
+
+                  } else {
+                    String changeRequestUrl = request.getRequestUrl().replace("/", "\\");
+
+                    file = new File(Paths.getStaticFilePath() + changeRequestUrl + HTML_EXTENSION);
+
+                  }
 
                   if (file.isFile()) {
                     sendResponse(file, response);
                   } else {
                     System.out.println("파일을 찾을 수 없습니다.");
-                    file = new File(
-                        Paths.getStaticFilePath() + Paths.getPathSeparate() + ERROR_PAGE);
+                    file =
+                        new File(Paths.getStaticFilePath() + Paths.getPathSeparate() + ERROR_PAGE);
                     sendResponse(file, response);
                   }
                 }
+                System.out.println(key);
               }
             } catch (Exception e) {
               e.printStackTrace();
@@ -127,11 +143,6 @@ public class WebServer {
 
   }
 
-  private void sendRedirect() {
-    
-  }
-  
-  
   private Request receiveRequest(Request request, BufferedReader bufferedReader) {
 
     try {
@@ -146,7 +157,7 @@ public class WebServer {
 
           request.setMethod(line.substring(0, firstBlank));
           request.setRequestUrl(line.substring(firstBlank + 1, lastBlank).trim());
-          System.out.println("?????????: " +request.getRequestUrl());
+          System.out.println("?????????: " + request.getRequestUrl());
           request.setHttpVersion(line.substring(lastBlank + 1).trim());
 
         } else {
@@ -171,7 +182,7 @@ public class WebServer {
 
   public void sendResponse(File file, Response response) throws IOException {
 
-    response.setFirstLine("HTTP/1.1 200 OK");
+    response.setStatusCode("HTTP/1.1 " + StatusCode.STATUS_200 + "OK");
     response.setContentType("Content-Type: text/html; charset=UTF-8");
     response.setContentLength("Content-Length: " + file.length());
     response.showScreen(file);

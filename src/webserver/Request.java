@@ -1,4 +1,4 @@
-package communication;
+package webserver;
 
 import java.util.HashMap;
 import java.util.Map;

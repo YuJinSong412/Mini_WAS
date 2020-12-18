@@ -1,10 +1,10 @@
-package container;
+package webcontainer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import communication.Response;
+import webserver.Response;
 
 public class HTTPServletResponse {
 
