@@ -36,7 +36,7 @@ public class WebServer {
 
   private static final String HTML_EXTENSION = ".html";
 
-  public void start(Map<String, Servlet> servletMap2) {
+  public void start(Map<String, Servlet> executableServlets) {
 
     ExecutorService threadPool = new ThreadPoolExecutor(10, // 코어 스레드 개수
         100, // 최대 스레드 개수
@@ -89,10 +89,10 @@ public class WebServer {
               // // statlc
               // }
 
-              for (String key : servletMap2.keySet()) {
+              for (String key : executableServlets.keySet()) {
                 if ((PAGE_FOLDER + newRequestUrl).equals(key)) {
 
-                  new WebContainer(request, response).start(servletMap2);
+                  new WebContainer(request, response).start(executableServlets);
 
                 } else { // 매핑 없으면 정적폴더로 가서 알맞게 띄우기
 
@@ -100,8 +100,7 @@ public class WebServer {
 
                   if (request.getRequestUrl().equals("/" + Paths.getContextName())) {
 
-                    file = new File(Paths.getStaticFilePath() + Paths.getPathSeparate() + "index"
-                        + HTML_EXTENSION);
+                    file = new File(Paths.getStaticFilePath() + Paths.getPathSeparate() + Paths.getWELCOME_FILE());
 
                   } else {
                     String changeRequestUrl = request.getRequestUrl().replace("/", "\\");

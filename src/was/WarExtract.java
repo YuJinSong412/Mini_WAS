@@ -13,15 +13,8 @@ public class WarExtract {
 
   private String warFileName = "Beer.war"; // 그냥 일단 지정해줌
 
-  //private String[] contexts;
-
   public void start() {
 
-   // contexts = findContextList();
-
-  //  for (int i = 0; i < contexts.length; i++) {
-
-     // System.out.println("zz" + contexts[i]);
       JarFile jarFile = null;
       try {
         jarFile = new JarFile(Paths.getDefaultRunPath() + Paths.getPathSeparate() + warFileName);
@@ -77,17 +70,7 @@ public class WarExtract {
       } catch (IOException e) {
         e.printStackTrace();
       }
-  //  }
-
   }
-
-//  private String[] findContextList() {
-//
-//    File webappsPath = new File(Paths.getDefaultRunPath());
-//    String[] contexts = webappsPath.list();
-//
-//    return contexts;
-//  }
 
   private String getContextName(String warFileName, String split) {
 

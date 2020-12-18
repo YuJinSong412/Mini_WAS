@@ -15,8 +15,7 @@ public class Paths {
   
   private static String STATIC_FILE_PATH = null;
   
- // private static String WELCOME_FILE = ;
-  
+  private static String WELCOME_FILE = "index.html";
   
   public static String getContextName() {
     
@@ -58,6 +57,18 @@ public class Paths {
   public static String getServletPath() {
   
     return SERVLET_PATH;
+  }
+
+  
+  public static String getWELCOME_FILE() {
+  
+    return WELCOME_FILE;
+  }
+
+  
+  public static void setWELCOME_FILE(String wELCOME_FILE) {
+  
+    WELCOME_FILE = wELCOME_FILE;
   }
 
 
