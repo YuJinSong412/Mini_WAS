@@ -24,6 +24,8 @@ public class WarLoader {
 
   private Map<String, Servlet> executableServlets;
 
+  private URLClassLoader urlClassLoader;
+
   public WarLoader() {
 
     servletMap = new HashMap<String, String>();
@@ -115,7 +117,7 @@ public class WarLoader {
     File classRepo = new File(Paths.getServletPath());
 
     try {
-      URLClassLoader urlClassLoader = new URLClassLoader(new URL[] {classRepo.toURI().toURL()});
+      urlClassLoader = new URLClassLoader(new URL[] {classRepo.toURI().toURL()});
 
       for (String key : servletMap.keySet()) {
         System.out.println("zz : " + servletMap.get(key));
