@@ -14,19 +14,20 @@ import env.Paths;
 import webcontainer.Servlet;
 import webcontainer.WebContainer;
 
-public class HttpReqRes implements Runnable{
-  
+public class HttpReqRes implements Runnable {
+
   private static final String ERROR_PAGE = "errorPage.html";
 
   private static final String PAGE_FOLDER = "/basic";
 
   private static final String HTML_EXTENSION = ".html";
-  
+
   Socket socket;
-  
+
   Map<String, Servlet> executableServlets;
-  
+
   public HttpReqRes(Socket socket, Map<String, Servlet> executableServlets) {
+
     this.socket = socket;
     this.executableServlets = executableServlets;
   }
@@ -55,36 +56,36 @@ public class HttpReqRes implements Runnable{
         String[] newRequestURL = request.getRequestUrl().split("\\?");
         newRequestUrl = newRequestURL[0];
       }
-      
-       if(executableServlets.keySet().contains(PAGE_FOLDER + newRequestUrl)) {
-      
-         new WebContainer(request, response).start(executableServlets);
-         
-       }else {
-       
-         File file = null;
 
-         if (request.getRequestUrl().equals("/" + Paths.getContextName())) {
+      if (executableServlets.keySet().contains(PAGE_FOLDER + newRequestUrl)) {
 
-           file = new File(Paths.getStaticFilePath() + Paths.getPathSeparate() + Paths.getWELCOME_FILE());
+        new WebContainer(request, response).start(executableServlets);
 
-         } else {
-           String changeRequestUrl = request.getRequestUrl().replace("/", "\\");
+      } else {
 
-           file = new File(Paths.getStaticFilePath() + changeRequestUrl + HTML_EXTENSION);
+        File file = null;
 
-         }
+        if (request.getRequestUrl().equals("/" + Paths.getContextName())) {
 
-         if (file.isFile()) {
-           sendResponse(file, response);
-         } else {
-           System.out.println("파일을 찾을 수 없습니다.");
-           file =
-               new File(Paths.getStaticFilePath() + Paths.getPathSeparate() + ERROR_PAGE);
-           sendResponse(file, response);
-         }
-         
-       }
+          file = new File(
+              Paths.getStaticFilePath() + Paths.getPathSeparate() + Paths.getWELCOME_FILE());
+
+        } else {
+          String changeRequestUrl = request.getRequestUrl().replace("/", "\\");
+
+          file = new File(Paths.getStaticFilePath() + changeRequestUrl + HTML_EXTENSION);
+
+        }
+
+        if (file.isFile()) {
+          sendResponse(file, response, StatusCode.STATUS_200);
+        } else {
+          System.out.println("파일을 찾을 수 없습니다.");
+          file = new File(Paths.getStaticFilePath() + Paths.getPathSeparate() + ERROR_PAGE);
+          sendResponse(file, response, StatusCode.STATUS_404);
+        }
+
+      }
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
@@ -98,7 +99,7 @@ public class HttpReqRes implements Runnable{
       }
     }
   }
-  
+
   private Request receiveRequest(Request request, BufferedReader bufferedReader) {
 
     try {
@@ -113,7 +114,6 @@ public class HttpReqRes implements Runnable{
 
           request.setMethod(line.substring(0, firstBlank));
           request.setRequestUrl(line.substring(firstBlank + 1, lastBlank).trim());
-          System.out.println("?????????: " + request.getRequestUrl());
           request.setHttpVersion(line.substring(lastBlank + 1).trim());
 
         } else {
@@ -135,10 +135,10 @@ public class HttpReqRes implements Runnable{
     }
     return request;
   }
-  
-  public void sendResponse(File file, Response response) throws IOException {
 
-    response.setStatusCode("HTTP/1.1 " + StatusCode.STATUS_200 + "OK");
+  public void sendResponse(File file, Response response, StatusCode status) throws IOException {
+
+    response.setStatusCode("HTTP/1.1 " + status + "OK");
     response.setContentType("Content-Type: text/html; charset=UTF-8");
     response.setContentLength("Content-Length: " + file.length());
     response.showScreen(file);

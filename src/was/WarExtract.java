@@ -24,9 +24,7 @@ public class WarExtract {
         jarFile = new JarFile(Paths.getDefaultRunPath() + Paths.getPathSeparate() + warFileName);
         String contextName = getContextName(warFileName, "\\.");
         
-        System.out.println("아락: " + contextName);
         Paths.setContextName(contextName);
-
 
         // 일단 폴더 이름이 있는지 확인하고(여기서는 Beer폴더) 없으면 폴더를 먼저 만들어준다.
         String contextPath = Paths.getDefaultRunPath() + Paths.getPathSeparate() + contextName;

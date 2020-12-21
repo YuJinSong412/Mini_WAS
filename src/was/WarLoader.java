@@ -120,7 +120,6 @@ public class WarLoader {
       urlClassLoader = new URLClassLoader(new URL[] {classRepo.toURI().toURL()});
 
       for (String key : servletMap.keySet()) {
-        System.out.println("zz : " + servletMap.get(key));
         Class<?> externalFromUrl = urlClassLoader.loadClass(servletMap.get(key));
 
         Servlet myServlet = (Servlet) externalFromUrl.newInstance();
